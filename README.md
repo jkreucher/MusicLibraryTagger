@@ -21,6 +21,13 @@ $ pip3 install mutegan
 $ pip3 install spotipy
 ```
 
+Before you run the script you must fill in the blank API access data consisting of your Spotify username and a API login. For that you need to change lines 10 to 12.
+```
+10 ClientUsr  = "username"
+11 ClientID   = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+12 ClientScrt = "00000000000000000000000000000000"
+```
+
 Now is the time to run the script. Is requires at least one argument. Each argument of the script will be a mp3 file to be tagged:
 ```
 $ python3 librarytagger.py <mp3_file_1> <mp3_file_2> <mp3_file_3> ... 
