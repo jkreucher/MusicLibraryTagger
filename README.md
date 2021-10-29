@@ -32,5 +32,5 @@ $ python3 librarytagger.py <library_path> <mp3_file> [<mp3_file_2> ...]
 
 Of course when having a rather large library you dont want to add each and every file by hand. For that a pipe is used to automate that. Just a single line to tag your entire library:
 ```
-$ find ./new/ -name '*.mp3' -print0 | xargs -0 ./librarytagger.py ./library/
+$ find ./newsongs/ -name '*.mp3' -print0 | xargs -0 ./librarytagger.py ./library/
 ```
