@@ -7,9 +7,9 @@ from mutagen.id3 import ID3, APIC, TRCK, TDRC, TIT2, TALB, TPE1, TPOS, USLT, TCO
 
 # User must fill in these details:
 # Spotify API access
-ClientUsr  = "linusmueller"
-ClientID   = "b4a7a71045104223beac9559f07a3617"
-ClientScrt = "01b5ffa1ee1f49c591d07ec25de91826"
+ClientUsr  = ""
+ClientID   = ""
+ClientScrt = ""
 
 
 class searcher:
