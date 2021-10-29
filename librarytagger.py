@@ -7,9 +7,9 @@ from mutagen.id3 import ID3, APIC, TRCK, TDRC, TIT2, TALB, TPE1, TPOS, USLT, TCO
 
 # User must fill in these details:
 # Spotify API access
-ClientUsr  = ""
-ClientID   = ""
-ClientScrt = ""
+ClientUsr  = "linusmueller"
+ClientID   = "b4a7a71045104223beac9559f07a3617"
+ClientScrt = "01b5ffa1ee1f49c591d07ec25de91826"
 
 
 class searcher:
@@ -70,6 +70,7 @@ class searcher:
 		if album["genres"]:
 			return album["genres"][0]
 		
+		print("No Genre!")
 		# no genre found
 		return ""
 
@@ -79,7 +80,7 @@ class searcher:
 		# named with the same scheme
 		artist = result["album"]["artists"][0]["name"].replace(" ","_")
 		title  = result["name"].replace(" ","_").replace(".","")
-		return artist + "-" + title
+		return artist, title
 	
 
 	def setAudioTags(self, result):
@@ -106,30 +107,66 @@ class searcher:
 
 
 
+
 if __name__ == '__main__':
 	# if this script is executed instead of imported.
 	import json, sys
 
-	if len(sys.argv) < 2:
+	if len(sys.argv) < 3:
 		print("Usage:")
-		print(sys.argv[0]+" <mp3file> <mp3file> ...")
+		print(sys.argv[0]+" <library> <mp3file> [<mp3file> ...]")
 		exit()
 	
-	# for each argument (mp3 file)
-	for i in range(1, len(sys.argv)):
+	# get library folder
+	library = sys.argv[1]
+	if library [:-1] != '/':
+		library += '/'
+	if not os.path.isdir(library):
+		print("[!] Make library "+library)
+		os.mkdir(library)
+	else:
+		print("[*] Use \""+library+"\"")
+	
+	# for each argument (mp3 files)
+	for i in range(2, len(sys.argv)):
 		# separate path and filename
 		path, filename = os.path.split(sys.argv[i])
+		# check if file exists
+		if not os.path.isfile(sys.argv[i]):
+			print("[-] File does not exist: "+sys.argv[i])
+			continue
 		# keep user happy
-		print("[+] Tagging "+sys.argv[i])
+		print("[+] Tagging "+filename)
 		# set filename
 		app = searcher()
 		app.setFilename(sys.argv[i])
+
 		# create a searchable string from filename
 		search_string = filename.replace(".mp3","").replace("-", " ").replace("_", " ").replace("(","").replace(")","")
-		# search song
-		result = app.searchSong(search_string)
-		#print(json.dumps(result, indent=4, sort_keys=True))
-		# set tags
-		app.setAudioTags(result)
-		# rename file
-		os.rename(sys.argv[i], path+"/"+app.generateFilename(result)+".mp3")
+		# try and find somethig if nothing found try and shorten the search string and try again
+		result = False
+		index = len(search_string)
+		while not result:
+			# search song
+			result = app.searchSong(search_string[:index])
+			# try until half of string is left
+			index -= 2
+			if index < len(search_string) / 2:
+				break
+
+		# only if we found something valid
+		if result:
+			# set tags
+			app.setAudioTags(result)
+			# create filename
+			artist, title = app.generateFilename(result)
+			path = library+artist+"/"+artist+"-"+title+".mp3"
+			if not os.path.isdir(library+artist):
+				os.mkdir(library+artist)
+			# move file
+			if not os.path.isfile(path):
+				os.rename(sys.argv[i], path)
+			else:
+				print("[-] File exists: "+path)
+		else:
+			print("[-] Not found: "+search_string)
