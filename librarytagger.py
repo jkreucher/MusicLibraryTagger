@@ -2,7 +2,6 @@
 import spotipy
 import os
 import requests
-#import mutagen
 from mutagen.id3 import ID3, APIC, TRCK, TDRC, TIT2, TALB, TPE1, TPOS, USLT, TCOM, TCON, TSRC, COMM
 
 # User must fill in these details:
